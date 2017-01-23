@@ -124,6 +124,7 @@ $(function(){
   $('#book-filter-go').click(function() {
     doFilter();
     $('#book-filter').removeClass('in');
+    $('html').scrollTop(0);
     return false;
   });
 
