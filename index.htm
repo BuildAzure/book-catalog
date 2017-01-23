@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  id='top'>
+<head>
+    <title>Build Azure Books Catalog</title>
+
+    <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jsQuizEngine.css">
+    <link rel="stylesheet" type="text/css" href="css/site.css">
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.2.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.4/bootstrap.min.js"></script>
+
+    <style>
+      body {
+        margin-top: 5em;
+      }
+
+      .book img {
+        max-height: 23em;
+        min-height: 23em;
+      }
+
+      .book-title {
+        min-height: 4.5em;
+      }
+
+      .book-description {
+        min-height: 10em;
+        max-height: 10em;
+        overflow: scroll;
+      }
+      .book-author {
+        min-height: 3.5em;
+        max-height: 3.5em;
+      }
+      .book-author:before {
+          content: 'Written by: ';
+      }
+      .book-year {
+        font-size: 1.5em;
+        text-align: right;
+      }
+      .book-price {
+        text-align: right;
+      }
+      .book-links {
+        padding-top: 0.3em;
+      }
+
+      #books {
+        margin-top: 5em;
+      }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#book-filter" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+      <a class="navbar-brand" href="#">
+        <!--img alt="Brand" src="..."-->
+        Build Azure Books Catalog
+      </a>
+    </div>
+
+    <div id="book-filter" class="navbar-form navbar-right navbar-collapse collapse">
+  <div class="form-group">
+    <label for="book-year-filter">Published</label>
+    <select id='book-year-filter' class="form-control">
+      <option>All</option>
+      <option>2012</option>
+      <option>2014</option>
+      <option>2015</option>
+      <option>2016</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="book-price-filter">Price</label>
+    <select id='book-price-filter' class="form-control">
+      <option>All</option>
+      <option>Free</option>
+      <option>Paid</option>
+      </select>
+  </div>
+  <div class="form-group">
+    <label for="book-search">Search</label>
+    <input type='text' id='book-search' class="form-control"/>
+  </div>
+
+  <button id="book-filter-go" class='btn btn-primary'>Filter</button>
+  <button id="book-filter-reset" class='btn btn-default'>Reset</button>
+</div>
+  </div>
+</nav>
+
+
+
+<script>
+$(function(){
+
+  // Make Contains case insensitive
+  $.expr[":"].contains = $.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+  });
+
+
+  $('#book-filter-reset').click(function(){
+    resetFilter();
+    return false;
+  });
+
+  $('#book-filter-go').click(function() {
+    doFilter();
+    $('#book-filter').removeClass('in');
+    return false;
+  });
+
+  $('#book-filter').find('select').change(function(){
+    doFilter();
+  });
+
+  $('#book-search').keyup(doFilter).keypress(doFilter);
+
+  function resetFilter(){
+    $('#book-year-filter option').removeAttr('selected');
+    $('#book-price-filter option').removeAttr('selected');
+    $('#book-search').val('');
+    doFilter();
+  }
+
+  function doFilter() {
+    var yr =  $('#book-year-filter option:selected').text();
+    var price = $('#book-price-filter option:selected').text();
+    var search = $('#book-search').val();
+
+    $('.book').each(function(i, e){
+      var elem = $(e);
+      if (
+        (yr === 'All' || elem.has('.book-year:contains("' + yr + '")').length > 0)
+        && (price === 'All' || elem.has('.book-price:contains("' + price + '")').length > 0)
+        && (!search || elem.has(':contains("' + search + '")').length > 0)
+      ) {
+        elem.show();
+      } else {
+        elem.hide();
+      }
+    });
+    
+    $('html').scrollTop(0);
+  }
+
+  resetFilter();
+});
+</script>
+
+<div class="row">
+
+  <!-- 
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="">
+        <img src="" alt="">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>title</h3>
+        <p class='book-description'>description</p>
+        <p class='book-author'>author</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="#" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+-->
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2j38WSV">
+        
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B00OQU4OGG&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Automating Microsoft Azure Infrastructure Services</h3>
+        <p class='book-description'>Get valuable tips and techniques for automating your cloud deployments with Azure PowerShell cmdlets, and learn how to provision Azure services on the fly. In this hands-on guide, Microsoft cloud technology expert Michael Washam shows you how to automate various management tasks and deploy solutions that are both complex and at scale.</p>
+        <p class='book-author'>Michael Washam</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 book-price">PAID</div>
+              <div class="col-lg-12 book-year">2014</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2j38WSV" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/01/30/free-ebook-azure-automation/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/01/ebook-mspress-azureessentials-azureautomation.png?w=492&h=600" alt="Azure Essentials: Azure Automation">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Azure Essentials: Azure Automation</h3>
+        <p class='book-description'>The book "Microsoft Azure Essentials: Azure Automation"" written by Michael McKeown is written to target IT Pros and PowerShell developers to help them understand the core concepts of Azure Automation. This includes using runbooks based on PowerShell Workflow, and orchestrating frequent deployment (ala DevOps) and life cycle management through the use of automating Azure resource setup and maintenance.</p>
+        <p class='book-author'>Michael McKeown</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/01/30/free-ebook-azure-automation/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/01/26/free-ebook-azure-machine-learning/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/01/ebok-azureessentialsmachinelearning.png?w=494&h=600" alt="Azure Essentials: Azure Machine Learning">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Azure Essentials: Azure Machine Learning</h3>
+        <p class='book-description'>Published by Microsoft Press, has been made available as a Free eBook over on the Microsoft Virtual Academy site. This book introduces developers to using Azure Machine Learning for building predictive analytics models and deploy them for consumption as web services.</p>
+        <p class='book-author'>Jeff Barnes</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/01/26/free-ebook-azure-machine-learning/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/02/05/free-ebook-fundamentals-of-azure/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/02/ebook-mspress-fundamentalsofazure-2nd-edition.png?w=246&h=300" alt="Azure Essentials: Fundamentals of Azure (Second Edition)">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Azure Essentials: Fundamentals of Azure (Second Edition)</h3>
+        <p class='book-description'>The material covered in this book are targeted towards introducing both Developers and IT Professionals to the huge range of features and capabilities within the Microsoft Azure platform.</p>
+        <p class='book-author'>Michael Collier, Robin Shahan</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/02/05/free-ebook-fundamentals-of-azure/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/06/09/free-ebook-migrating-sql-server-to-databases-to-azure/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/06/ebookazuremigratingsqlserver.png?w=244&h=300" alt="Azure Essentials: Migrating SQL Server Databases to Azure">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Azure Essentials: Migrating SQL Server Databases to Azure</h3>
+        <p class='book-description'>This book is part of the "Microsoft Azure Essentials" books series. With this book you will learn how SQL Server in Azure is similar to SQL Server in an on-premises environment. You will also learn how they are different. The author, Carl Rabeler, is a content lead for Azure.com and will walk you through the steps of getting started with SQL Server in an Azure Virtual Machine as well as Azure SQL Databases.</p>
+        <p class='book-author'>Carl Rabeler</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/06/09/free-ebook-migrating-sql-server-to-databases-to-azure/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/02/02/free-ebook-azure-web-apps-for-developers/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/01/ebook-azureessentials-azurewebappsfordevs.png?w=245&h=300" alt="Azure Essentials: Azure Web Apps for Developers">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Azure Essentials: Azure Web Apps for Developers</h3>
+        <p class='book-description'>This book covers the necessary information to help developers advance their technical skills in developing, deploying and managing Web Applications hosted within the Microsoft Azure platform using the Web Apps feature set. This book is written to target .NET developers from beginner to advanced.</p>
+        <p class='book-author'>Rick Rainey</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/02/02/free-ebook-azure-web-apps-for-developers/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/02/10/free-ebook-building-cloud-apps-with-microsoft-azure-devops-availability-storage-more/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/01/ebook-mspress-buildingcloudappsmsazure.png?w=245&h=300" alt="Building Cloud Apps with Microsoft Azure">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Building Cloud Apps with Microsoft Azure</h3>
+        <p class='book-description'>This books goes through a pattern-based approach to building best pracice, real-world solutions with Microsoft Azure including DevOps, Availability, Storage, and more great topics. Among these practices covered include topics coving both Architecture and coding practices. The content of this book is based off the presentation Scott Guthrie gave at the Norwegian Developers Conference (NDC) in June, 2013, as well as Microsoft Tech Ed Australia in September, 2013.</p>
+        <p class='book-author'>Scott Guthrie, Mark Simms, Tom Dykstra, Rick Anderson, Mike Wasson</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2014</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/02/10/free-ebook-building-cloud-apps-with-microsoft-azure-devops-availability-storage-more/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jGRaqp">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B009G8PYY4&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Cloud Architecture Patterns</h3>
+        <p class='book-description'>If your team is investigating ways to design applications for the cloud, this concise book introduces 11 architecture patterns that can help you take advantage of cloud-platform services. You’ll learn how each of these platform-agnostic patterns work, when they might be useful in the cloud, and what impact they’ll have on your application architecture. You’ll also see an example of each pattern applied to an application built with Windows Azure.</p>
+        <p class='book-author'>Bill Wilder</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2012</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jGRaqp" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/07/29/free-ebook-configuring-microsoft-sharepoint-hybrid-capabilities/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/07/freeebookconfiguringmssharepointhybridcapabilities.png?w=246&h=300" alt="Configuring Microsoft SharePoint Hybrid Capabilities">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Configuring Microsoft SharePoint Hybrid Capabilities</h3>
+        <p class='book-description'>This book is the second book in a series of SharePoint Hybrid books that cover how to configure, troubleshoot, and manage a SharePoint Hybrid environment.</p>
+        <p class='book-author'>Jeremy Taylor, Neil Hodgkinson, Manas Biswas</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/07/29/free-ebook-configuring-microsoft-sharepoint-hybrid-capabilities/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/12/07/free-ebook-containerized-docker-application-lifecycle-with-microsoft-platform-and-tools/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/12/ebook_msdockerapplifecycle.png?w=476&h=600" alt="Containerized Docker Application Lifecycle with Microsoft Platform and Tools">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Containerized Docker Application Lifecycle with Microsoft Platform and Tools</h3>
+        <p class='book-description'>If you're new to Docker, it's recommended to start reading this book from the beginning as it covers the fundamental Docker terms, including containers, images, registry, clusters, orchestrators, and Docker itself. However, if you're already familiar with Docker, and just want to know what tools Microsoft has to offer, you can skip on to the "Introduction to the Microsoft platform and tools for Containerized Applications" and continue from there.</p>
+        <p class='book-author'>Cesar de la Torre</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/12/07/free-ebook-containerized-docker-application-lifecycle-with-microsoft-platform-and-tools/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/09/22/free-ebook-creating-mobile-apps-with-xamarin-forms/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/07/freeebookcreatemobileappsxamarinforms.png?w=246&h=300" alt="Creating Mobile Apps with Xamarin.Forms">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Creating Mobile Apps with Xamarin.Forms</h3>
+        <p class='book-description'>A deep dive for C# developers who want to write applications that target the 3 most popular mobile platforms: iOS, Android, and Windows! This free eBook has been made available by Microsoft Press and will definitely be a go-to guide on building Mobile Apps with Xamarin.Forms for any developer new to the Xamarin platform, or even for the more experienced looking for a deeper dive to learn more.</p>
+        <p class='book-author'>Charles Petzold</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/09/22/free-ebook-creating-mobile-apps-with-xamarin-forms/" class="btn btn-primary" role="button">Download</a>
+            <a target="_blank" href="http://amzn.to/2iEURzC" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/12/16/free-ebook-data-science-with-microsoft-sql-server-2016/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/12/ebook-datasciencemssqlserver2016.png?w=360&h=600" alt="Data Science with Microsoft SQL Server 2016">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Data Science with Microsoft SQL Server 2016</h3>
+        <p class='book-description'>It's a new world of Big Data and Data Science. SQL Server 2016 was built for this brand new world to help businesses get ahead. This free ebook helps you learn to install, configure, and use Microsoft SQL Server R Services in data science projects. R has become one of the worlds most popular, powerful data analytics languages and environments by data scientists today!</p>
+        <p>
+        <p class='book-author'>Buck Woody, Danielle Dean, Debraj GuhaThakurta, Gagan Bansal, Matt Conners, Wee-Hyong Tok</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/12/16/free-ebook-data-science-with-microsoft-sql-server-2016/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2017/01/04/free-ebook-defending-the-new-perimeter-modern-security-from-microsoft/">
+        <img src="https://buildazurecom.files.wordpress.com/2017/01/free_ebook_defendingthenewperimeter.png?w=462&h=600" alt="Defending the New Perimeter">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Defending the New Permimeter: Modern Security from Microsoft</h3>
+        <p class='book-description'>A guide to the Microsoft Cybersecurity Stack for IT Decision Makers written by Pete Zerger and Wes Kroesbergen. The book discusses topics such as: Identifying Threats at Scale, Leveraging Identity as a Gateway, and Protecting the Modern Perimeter.</p>
+        <p class='book-author'>Pete Zerger, Wes Kroesbergen</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2017/01/04/free-ebook-defending-the-new-perimeter-modern-security-from-microsoft/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/01/25/enterprise-cloud-strategy-free-ebook/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/01/ebook-enterprisecloudstrategy.jpg" alt="Enterprise Cloud Strategy">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Enterprise Cloud Strategy</h3>
+        <p class='book-description'>Enterprise Cloud Strategy outlines the benefits Enterprises can realize from adoption Microsoft Azure and the Cloud. Based on the authors real world experience they describe the details necessary to answer the most common questions Enterprises have on moving to the cloud.</p>
+        <p class='book-author'>Barry Briggs, Eduardo Kassner</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/01/25/enterprise-cloud-strategy-free-ebook/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jODLyG">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B00VR8W9O4&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Hardening Azure Applications</h3>
+        <p class='book-description'>Learn what it takes to build large scale, mission critical applications -hardened applications- on the Azure cloud platform.</p>
+        <p class='book-author'>Suren Machiraju, Suraj Gaurav</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jODLyG" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2j34ByN">
+        <img src="https://images-na.ssl-images-amazon.com/images/I/51jlO3TjABL.jpg" alt="Introducing Microsoft Azure HDInsight">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Introducing Microsoft Azure HDInsight</h3>
+        <p class='book-description'>Microsoft Azure HDInsight is Microsoft's 100 percent compliant distribution of Apache Hadoop on Microsoft Azure. This means that standard Hadoop concepts and technologies apply, so learning the Hadoop stack helps you learn the HDInsight service. At the time of this writing, HDInsight (version 3.0) uses Hadoop version 2.2 and Hortonworks Data Platform 2.0.</p>
+        <p class='book-author'>Avkash Chauhan, Valentine Fontama, Michele Hart, Wee Hyong Tok, Buck Woody</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2014</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2j34ByN" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/08/12/free-ebook-introducing-microsoft-power-bi/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/07/freeebookintromspowerbi.png?w=246&h=300" alt="Introducing Microsoft Power BI">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Introducing Microsoft Power BI</h3>
+        <p class='book-description'>Want to get started with Power BI, but don't know where to start? The "Introducing Microsoft Power BI" free eBook from Microsoft Press may be the guide you've been looking for. This book covers the basics of Power BI as well as a practical, scenario-based tour of Power BI. Using this book you can get an overview of PowerBI, or dig deeper and follow along with the many examples throughout the book.</p>
+        <p class='book-author'>Alberto Ferrari, Marco Russo</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/08/12/free-ebook-introducing-microsoft-power-bi/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jQWgmv">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B015Q7I3M8&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Learning Azure DocumentDB</h3>
+        <p class='book-description'>Get to know the concepts of DocumentDB and learn to work your way around it. Manipulate and query your documents using different modern technologies to access DocumentDB. Build a real-life scenario using Microsoft Visual Studio and C# with this handy and practical guide</p>
+        <p class='book-author'>Riccardo Becker</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jQWgmv" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jOLjBg">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B015PQPA4Y&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Microservices, IoT, and Azure: Leveraging DevOps and Microservice Architecture to deliver SaaS Solutions</h3>
+        <p class='book-description'>This book provides practical guidance for adopting a high velocity, continuous delivery process to create reliable, scalable, Software-as-a-Service (SaaS) solutions that are designed and built using a microservice architecture, deployed to the Azure cloud, and managed through automation. Microservices, IoT, and Azure offers software developers, architects, and operations engineers’ step-by-step directions for building SaaS applications—applications that are available 24x7, work on any device, scale elastically, and are resilient to change--through code, script, exercises, and a working reference implementation.</p>
+        <p class='book-author'>Bob Familiar</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jOLjBg" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jOB7sD">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B00VTNP5UM&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Microsoft Azure Security</h3>
+        <p class='book-description'>This book is intended for Azure administrators who want to understand the application of security principles in distributed environments and how to use Azure to its full capability to reduce the risks of security breaches. Only basic knowledge of the security processes and services of Microsoft Azure is required.</p>
+        <p class='book-author'>Roberto Freato</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2015</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jOB7sD" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="http://amzn.to/2jeNehY">
+        <img border="0" src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B01L9D1NH0&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=build00c-20"/>
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Microsoft Azure Security Infrastructure</h3>
+        <p class='book-description'>Implement maximum control, security, and compliance processes in Azure cloud environments In Microsoft Azure Security Infrastructure ,1/e  three leading experts show how to plan, deploy, and operate Microsoft Azure with outstanding levels of control, security, and compliance. You’ll learn how to prepare infrastructure with Microsoft’s integrated tools, prebuilt templates, and managed services–and use these to help safely build and manage any enterprise, mobile, web, or Internet of Things (IoT) system. The authors guide you through enforcing, managing, and verifying robust security at physical, network, host, application, and data layers. You’ll learn best practices for security-aware deployment, operational management, threat mitigation, and continuous improvement–so you can help protect all your data, make services resilient to attack, and stay in control no matter how your cloud systems evolve.</p>
+        <p class='book-author'>Yuri Diogenes, Tom Shinder, Debra Shinder</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">PAID</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="http://amzn.to/2jeNehY" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/09/08/free-ebook-microsoft-platform-and-tools-for-mobile-app-development/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/07/freeebookmsplatformtoolsformobileappdev.png?w=245&h=300" alt="Microsoft Platform and Tools for Mobile App Development">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Microsoft Platform and Tools for Mobile App Development</h3>
+        <p class='book-description'>It's important for today's decision makers to understand how to create a mobile app development strategy. This can be key to opening up new business opportunities. The "Microsoft Platform and Tools for Mobile App Development" Free eBook written by Cesar de la Torre and Simon Calvert provides answers to this problem area. This book covers topics on how Microsoft defines an end-to-end platform for the agile creation of mobile apps tagging any platform from iOS to Android to Windows, as well as providing an easy to consume set of services in both the cloud and on-premises. Microsoft also offers DevOps tooling to help improve application quality and to achieve faster time to market.</p>
+        <p class='book-author'>Cesar de la Torre, Simon Calvert</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/09/08/free-ebook-microsoft-platform-and-tools-for-mobile-app-development/" class="btn btn-primary" role="button">Buy it</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-5 col-md-3 book">
+    <div class="thumbnail">
+      <a target="_blank" href="https://buildazure.com/2016/07/22/free-ebook-planning-and-preparing-for-microsoft-sharepoint-hybrid/">
+        <img src="https://buildazurecom.files.wordpress.com/2016/07/freeebookplanningpreparingmssharepointhybrid.png?w=245&h=300" alt="Planning and Preparing for Microsoft SharePoint Hybrid">
+      </a>
+      <div class="caption">
+        <h3 class='book-title'>Planning and Preparing for Microsoft SharePoint Hybrid</h3>
+        <p class='book-description'>This is part of a series of books covering SharePoint Hybrid solutions from SharePoint on-premises to Microsoft's cloud services. Topics covered include: foundational topics with Office 365 and Microsoft Azure, architecture planning, platform hygiene and preparation, directory synchronization, as well as how to configure a seamless single sign-on (SSO) experience for users.</p>
+        <p class='book-author'>Jeremy Taylor</p>
+        <p class='book-links'>
+            <div class='pull-right book-published'>
+              <div class="col-lg-12 text-success book-price">FREE</div>
+              <div class="col-lg-12 book-year">2016</div>
+            </div>
+            <a target="_blank" href="https://buildazure.com/2016/07/22/free-ebook-planning-and-preparing-for-microsoft-sharepoint-hybrid/" class="btn btn-primary" role="button">Download</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+</body>
+</html>
