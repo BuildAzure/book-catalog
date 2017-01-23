@@ -61,44 +61,51 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#book-filter" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
       <a class="navbar-brand" href="#">
         <!--img alt="Brand" src="..."-->
         Build Azure Books Catalog
       </a>
     </div>
 
-    <div id="book-filter" class="navbar-form navbar-right navbar-collapse collapse">
-  <div class="form-group">
-    <label for="book-year-filter">Published</label>
-    <select id='book-year-filter' class="form-control">
-      <option>All</option>
-      <option>2012</option>
-      <option>2014</option>
-      <option>2015</option>
-      <option>2016</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="book-price-filter">Price</label>
-    <select id='book-price-filter' class="form-control">
-      <option>All</option>
-      <option>Free</option>
-      <option>Paid</option>
-      </select>
-  </div>
-  <div class="form-group">
-    <label for="book-search">Search</label>
-    <input type='text' id='book-search' class="form-control"/>
-  </div>
+    <div id="book-filter" class="navbar-collapse collapse">
+        
+      <span class='navbar-text'><span id="book-count">?</span> Books in Catalog and Growing!</span>
+        
+      <div class="navbar-form navbar-right">
+        <div class="form-group">
+          <label for="book-year-filter">Published</label>
+          <select id='book-year-filter' class="form-control">
+            <option>All</option>
+            <option>2012</option>
+            <option>2014</option>
+            <option>2015</option>
+            <option>2016</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="book-price-filter">Price</label>
+          <select id='book-price-filter' class="form-control">
+            <option>All</option>
+            <option>Free</option>
+            <option>Paid</option>
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="book-search">Search</label>
+          <input type='text' id='book-search' class="form-control"/>
+        </div>
 
-  <button id="book-filter-go" class='btn btn-primary'>Filter</button>
-  <button id="book-filter-reset" class='btn btn-default'>Reset</button>
-</div>
+        <button id="book-filter-go" class='btn btn-primary'>Filter</button>
+        <button id="book-filter-reset" class='btn btn-default'>Reset</button>
+      </div>
+
+    </div>
+
   </div>
 </nav>
 
@@ -114,6 +121,7 @@ $(function(){
     };
   });
 
+  $('#book-count').text($('.book').length);
 
   $('#book-filter-reset').click(function(){
     resetFilter();
@@ -814,6 +822,16 @@ $(function(){
     </div>
   </div>
 
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    Do you think a book should be added to the catalog? <a href="https://github.com/BuildAzure/book-catalog/issues" target="_blank">Please submit it as an Issue over on our Github repo.</a>
+  </div>
+</div>
+
+<div class="footer">
+  Copyright &copy; <a href="http://buildazure.com" target="_blank">Build Azure</a>. Licensed under <a target="_blank" href="https://github.com/BuildAzure/book-catalog/blob/master/LICENSE">MIT License</a>
 </div>
 
 
