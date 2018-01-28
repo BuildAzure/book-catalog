@@ -12,6 +12,7 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.2.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.4/bootstrap.min.js"></script>
+    <script src="jhash.min.js"></script>
 
     <style>
       body {
@@ -150,21 +151,30 @@ $(function(){
   });
 
   $('#book-filter').find('select').change(function(){
-    doFilter();
+    jHash.val({
+      "year": $("#book-year-filter option:selected").text(),
+      "price": $("#book-price-filter option:selected").text()
+    });
+    $('html').scrollTop(0);
   });
-
+  
   $('#book-search').keyup(doFilter).keypress(doFilter);
 
   function resetFilter(){
-    $('#book-year-filter option').removeAttr('selected');
-    $('#book-price-filter option').removeAttr('selected');
+    jHash.clear({});
+    $('#book-year-filter option:selected').removeAttr('selected');
+    $('#book-price-filter option:selected').removeAttr('selected');
     $('#book-search').val('');
     doFilter();
   }
 
+  jHash.change(function (){
+    doFilter();
+  });
+
   function doFilter() {
-    var yr =  $('#book-year-filter option:selected').text();
-    var price = $('#book-price-filter option:selected').text();
+    var yr =  jHash.val('year') || 'All';
+    var price = jHash.val('price') || 'All';
     var search = $('#book-search').val();
 
     $('.book').each(function(i, e){
@@ -183,7 +193,9 @@ $(function(){
     $('html').scrollTop(0);
   }
 
-  resetFilter();
+  $('#book-year-filter').val(jHash.val('year'));
+  $('#book-price-filter').val(jHash.val('price'));
+  doFilter();
 });
 </script>
 
@@ -1288,7 +1300,7 @@ Exam Ref 70-767 Implementing a SQL Data Warehouse offers professional-level prep
 </div>
 
 <div class="footer">
-  Copyright &copy; <a href="http://buildazure.com" target="_blank">Build Azure</a>. Licensed under <a target="_blank" href="https://github.com/BuildAzure/book-catalog/blob/master/LICENSE">MIT License</a>
+  Copyright &copy; 2018 <a href="http://buildazure.com" target="_blank">Build Azure</a>. Licensed under <a target="_blank" href="https://github.com/BuildAzure/book-catalog/blob/master/LICENSE">MIT License</a>
 </div>
 
 
